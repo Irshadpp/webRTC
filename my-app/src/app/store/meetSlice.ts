@@ -6,6 +6,7 @@ export const initialState: any = {
   identinty: "",
   isRoomHost: false,
   connectOnlyWithAudio: false,
+  roomId: null,
 };
 
 const meetSlice = createSlice({
@@ -14,17 +15,24 @@ const meetSlice = createSlice({
   reducers: {
     setIsRoomHost(state, action: PayloadAction<boolean>){
         state.isRoomHost = action.payload
-        console.log(action.payload)
     },
     setConnectOnlyWithAudio (state, action: PayloadAction<boolean>){
         state.connectOnlyWithAudio = action.payload;
+    },
+    setRoomId (state, action: PayloadAction<string>){
+      state.roomId = action.payload
+    },
+    setIdentity (state, action: PayloadAction<string>){
+      state.identinty = action.payload
     }
   },
 });
 
 export const {
     setIsRoomHost,
-    setConnectOnlyWithAudio
+    setConnectOnlyWithAudio,
+    setRoomId,
+    setIdentity
 } = meetSlice.actions;
 
 export default meetSlice.reducer;
