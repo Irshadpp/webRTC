@@ -33,6 +33,7 @@ const JoinRoomContent = () => {
 
   const joinRoom = async () =>{
     try {
+      console.log(roomIdValue)
       const response = await getRoomExists(roomIdValue);
       if(response.success){
         dispatch(setRoomId(roomIdValue))

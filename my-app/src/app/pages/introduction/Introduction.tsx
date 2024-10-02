@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ConnectingButtons from './ConnectingButtons'
 import "./introduction.css"
 import logo from "../../../public/logo.png"
+import { connectWithSocketIOServer } from '../../../utils/wss'
 
 const Introduction = () => {
+
+useEffect(()=>{
+  connectWithSocketIOServer();
+},[])
+
   return (
     <div className="introduction_page_container">
     <div className="introduction_page_panel">

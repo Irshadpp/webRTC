@@ -3,10 +3,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 export const initialState: any = {
-  identinty: "",
+  identity: "",
   isRoomHost: false,
   connectOnlyWithAudio: false,
   roomId: null,
+  showOverlay: true,
+  participants: [],
 };
 
 const meetSlice = createSlice({
@@ -23,8 +25,15 @@ const meetSlice = createSlice({
       state.roomId = action.payload
     },
     setIdentity (state, action: PayloadAction<string>){
-      state.identinty = action.payload
-    }
+      state.identity = action.payload
+    },
+    setShowOverlay (state, action: PayloadAction<boolean>){
+      state.showOverlay = action.payload;
+    },
+    setParticipants (state, action: PayloadAction<any[]>){
+      state.participants = action.payload
+    },
+    resetState: () => initialState
   },
 });
 
@@ -32,7 +41,10 @@ export const {
     setIsRoomHost,
     setConnectOnlyWithAudio,
     setRoomId,
-    setIdentity
+    setIdentity,
+    setShowOverlay,
+    setParticipants,
+    resetState
 } = meetSlice.actions;
 
 export default meetSlice.reducer;
