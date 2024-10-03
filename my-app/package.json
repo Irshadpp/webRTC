@@ -22,6 +22,7 @@
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.26.2",
     "redux-persist": "^6.0.0",
+    "simple-peer": "^9.11.0",
     "socket.io-client": "^4.8.0"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
+    "@types/simple-peer": "^9.11.8",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -40,6 +42,8 @@
     "prettier": "^3.2.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.11",
+    "vite-compatible-readable-stream": "^3.6.1",
+    "vite-plugin-node-polyfills": "^0.22.0",
     "vitest": "^1.2.0"
   }
 }

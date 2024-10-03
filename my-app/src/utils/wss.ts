@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 import store from "../app/store/store";
 import { setParticipants, setRoomId } from "../app/store/meetSlice";
+import * as webRTCHandler from "./webRTCHandler";
 
 const server = "http://localhost:8000"
 
@@ -21,6 +22,23 @@ export const connectWithSocketIOServer = () =>{
         console.log(connectedUsers, "updated.........")
         store.dispatch(setParticipants(connectedUsers));
     });
+
+    socket.on('conn-prepare', ({connUserSocketId}:any) =>{
+        console.log("listened conn-preapare event========>", connUserSocketId)
+        webRTCHandler.prepareNewPeerConnection(connUserSocketId, false)
+
+        //inform the user which just join the room that we are perpared for incoming connection
+        socket.emit('conn-init', {connUserSocketId: connUserSocketId})
+    })
+
+    socket.on('conn-signal', (data: any) =>{
+        webRTCHandler.handleSignalingDatam(data);
+    })
+
+    socket.on('conn-init', (data: any) =>{
+        const connUserSocketId = {data};
+        webRTCHandler.prepareNewPeerConnection(connUserSocketId, true);
+    })
 }
 
 export const createNewRoom = (identity: string) =>{
@@ -38,4 +56,8 @@ export const joinRoom = (identity: string, roomId: string) =>{
 
     console.log("event emited to join-room")
     socket.emit("join-room", data)
+}
+
+export const signalPeerData = (data: any) =>{
+    socket.emit("conn-signal", data)
 }

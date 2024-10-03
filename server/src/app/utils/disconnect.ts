@@ -15,7 +15,7 @@ export const disconnect = (socket: any, io: any) =>{
         //leave socket io room
         socket.leave(user.roomId)
 
-        if(room.connectedUser.length > 0){
+        if(room.connectedUsers.length > 0){
             io.to(room.id).emit("room-updated", {connectedUsers: room.connectedUsers})      
         }else{
             const roomIndex = rooms.indexOf(room);

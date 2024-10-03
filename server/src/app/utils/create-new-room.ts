@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { connectedUsers, rooms } from '../..';
 
-export const createNewRoom = (identity: string, socket: any) =>{
+export const createNewRoom = (data: any, socket: any) =>{
     const roomId = uuidv4();
-
+    const {identity} = data; 
     const newUser = {
         identity,
         id: uuidv4(),
