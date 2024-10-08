@@ -14,6 +14,13 @@ import Introduction from "./app/pages/introduction/Introduction"
 import Room from "./app/pages/room/Room"
 import JoinRoom from "./app/pages/join-room/JoinRoom"
 
+if (!window.RTCPeerConnection || !window.crypto || !window.crypto.getRandomValues) {
+  console.error("Your browser does not support WebRTC or secure random number generation.");
+}else{
+  console.log("Browser is working fine......")
+}
+
+
 const router = createBrowserRouter([
   {
     path: "/",

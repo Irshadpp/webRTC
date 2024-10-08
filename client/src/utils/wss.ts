@@ -37,7 +37,7 @@ export const connectWithSocketIOServer = () =>{
     })
 
     socket.on('conn-init', (data: any) =>{
-        const connUserSocketId = {data};
+        const {connUserSocketId} = data;
         console.log("conn-init event recived from server..............", connUserSocketId)
         webRTCHandler.prepareNewPeerConnection(connUserSocketId, true);
         console.log("connection prepared for initiator...........")
@@ -57,7 +57,7 @@ export const joinRoom = (identity: string, roomId: string) =>{
         roomId
     }
 
-    console.log("event emited to join-room")
+    console.log("event emited to join-room with data=========>", data)
     socket.emit("join-room", data)
 }
 

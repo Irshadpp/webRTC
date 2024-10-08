@@ -41,7 +41,7 @@ const JoinRoomContent = () => {
       }
     } catch (error: any) {
      console.log(error)
-     setErrorMessage(error.response.data.message ||  "An error occurred. Please try again.")
+     setErrorMessage( "An error occurred. Please try again.")
     }
   }
 

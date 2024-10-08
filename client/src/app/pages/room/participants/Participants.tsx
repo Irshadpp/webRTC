@@ -6,13 +6,6 @@ interface ParticipantProps {
   identity: string;
 }
 
-const dummyParticipants: ParticipantProps[] = [
-  { identity: "irshad" },
-  { identity: "shahal" },
-  { identity: "razik" },
-  { identity: "shamil" },
-];
-
 interface SingleParticipantProps {
   participant: {identity: string};
   lastItem: boolean;

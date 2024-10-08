@@ -9,7 +9,7 @@ const defaultConstraints = {
 }
 
 let localStream: any;
-let streams: any[];
+let streams: any[] = [];
 
 export const getLocalPreviewAndInitRoomConnection = (
     isRoomHost: boolean,
@@ -67,9 +67,9 @@ export const prepareNewPeerConnection = (connUserSocketId: any, isInitiator: boo
             stream: localStream
         });
 
-        console.log("prepare new peer connection peer", peers[connUserSocketId]);
-
+        
         peers[connUserSocketId].on("signal", (data: any) => {
+            console.log("connUser socketId==================>",connUserSocketId,"signal data===================================>",data)
             const signalData = {
                 signal: data,
                 connUserSocketId: connUserSocketId
@@ -91,7 +91,9 @@ export const prepareNewPeerConnection = (connUserSocketId: any, isInitiator: boo
 
 export const handleSignalingDatam = ( data: any) =>{
     //add signaling data to peer connection
-    peers[data.connUserSocketId].signal(data.signal)
+    console.log("Received signaling data", data);
+    peers[data.connUserSocketId]?.signal(data.signal)
+    console.log("added signaling data to peer connection...........")
 }
 
 //////////////////////////////handling UI here///////////////////
@@ -129,8 +131,8 @@ const addStream = (stream: any, connectedUserSocketId: string) =>{
     videoElement.srcObject = stream;
     videoElement.id = `${connectedUserSocketId}-video`
 
-     // Apply the transform to flip the video horizontally
-//    videoElement.style.transform = "scaleX(-1)"; // This flips the video horizontally
+    //  Apply the transform to flip the video horizontally
+   videoElement.style.transform = "scaleX(-1)"; // This flips the video horizontally
 
    videoElement.onloadedmetadata = () =>{
        videoElement.play()
