@@ -4,6 +4,7 @@ import { setParticipants, setRoomId } from "../app/store/meetSlice";
 import * as webRTCHandler from "./webRTCHandler";
 
 const server = "http://localhost:8000"
+// const server = "https://1z0cd2xj-8000.inc1.devtunnels.ms/"
 
 let socket: any;
 export const connectWithSocketIOServer = () =>{
@@ -41,6 +42,10 @@ export const connectWithSocketIOServer = () =>{
         console.log("conn-init event recived from server..............", connUserSocketId)
         webRTCHandler.prepareNewPeerConnection(connUserSocketId, true);
         console.log("connection prepared for initiator...........")
+    });
+
+    socket.on("user-disconnected", (data: any) =>{
+        webRTCHandler.removePeerConnection(data);
     })
 }
 
