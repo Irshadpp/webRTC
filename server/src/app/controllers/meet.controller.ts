@@ -9,9 +9,9 @@ export const checkRoomExists = (req: Request, res: Response, next: NextFunction)
     if (!room) {
         return res.status(400).send({success: false, message: "Meeting is not found, please check your meeting id."});
     }
-    if (room.connectedUsers.length > 3) {
-        return res.status(401).send({success: false,  message: "Meeting is full, try again later."});
-    }
+    // if (room.connectedUsers.length > 3) {
+    //     return res.status(401).send({success: false,  message: "Meeting is full, try again later."});
+    // }
 
     return res.status(200).send({ success: true });
 }

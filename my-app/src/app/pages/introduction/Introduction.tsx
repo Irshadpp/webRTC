@@ -5,6 +5,15 @@ import logo from "../../../public/logo.png"
 import { connectWithSocketIOServer } from '../../../utils/wss'
 
 const Introduction = () => {
+  window.onload = () => {
+    console.log("Checking WebRTC and secure random number support...");
+    if ((window.crypto as any).getRandomValues && window.RTCPeerConnection) {
+        console.log("WebRTC and secure random number generation are supported.");
+    } else {
+        console.log("WebRTC or secure random number generation is not supported.");
+    }
+};
+
 
 useEffect(()=>{
   connectWithSocketIOServer();

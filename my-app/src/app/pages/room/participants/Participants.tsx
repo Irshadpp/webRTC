@@ -33,7 +33,7 @@ const Participants = () => {
     const {participants} = useSelector((state: RootState) => state.meet)
   return (
     <div className='participants_container'>
-      {participants.map((participant:any, index:number) => (
+      {participants && participants.map((participant:any, index:number) => (
         <SingleParticipants
           key={index}
           lastItem={participants.length === index + 1}
