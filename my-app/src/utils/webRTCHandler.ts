@@ -96,6 +96,28 @@ export const handleSignalingDatam = ( data: any) =>{
     console.log("added signaling data to peer connection...........")
 }
 
+export const removePeerConnection = (data: any) =>{
+    const {socketId} = data;
+    const videoContainer = document.getElementById(socketId);
+    const videoElement = document.getElementById(`${socketId}-video`) as HTMLVideoElement;
+
+    if(videoContainer && videoElement && videoElement.srcObject){
+        const tracks = (videoElement.srcObject as MediaStream).getTracks();
+
+        tracks.forEach(t => t.stop());
+
+        videoElement.srcObject = null;
+        videoContainer.removeChild(videoElement);
+
+        videoContainer.parentNode?.removeChild(videoContainer);
+
+        if(peers[socketId]){
+            peers[socketId].destroy();
+        }
+        delete peers[socketId]
+    }
+}
+
 //////////////////////////////handling UI here///////////////////
 const showLocalVideoPreview = (stream: any) =>{
     const videosContainer = document.getElementById("videos_portal");
@@ -132,7 +154,15 @@ const addStream = (stream: any, connectedUserSocketId: string) =>{
     videoElement.id = `${connectedUserSocketId}-video`
 
     //  Apply the transform to flip the video horizontally
-   videoElement.style.transform = "scaleX(-1)"; // This flips the video horizontally
+   videoElement.style.transform = "scaleX(-1)";
+
+   videoElement.addEventListener("click", () =>{
+    if(videoElement.classList.contains("full_screen")){
+        videoElement.classList.remove("full_screen");
+    }else{
+        videoElement.classList.add("full_screen");
+    }
+   })
 
    videoElement.onloadedmetadata = () =>{
        videoElement.play()
@@ -140,4 +170,11 @@ const addStream = (stream: any, connectedUserSocketId: string) =>{
 
    videoContainer.appendChild(videoElement);
    videosContainer?.appendChild(videoContainer);
+}
+
+
+//////////////////////////////Buttons logic///////////////////
+
+export const toggleMic = (isMuted: boolean) =>{
+    localStream.getAudioTracks()[0].enabled = isMuted ? true : false;
 }

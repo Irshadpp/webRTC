@@ -10,7 +10,8 @@ const app = express();
 app.use(json());
 
 const corsOptions = {
-    origin: "https://localhost:5173",
+    origin: "http://localhost:5173",
+    // origin: "https://1z0cd2xj-5173.inc1.devtunnels.ms",
     method: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
