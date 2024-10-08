@@ -178,3 +178,7 @@ const addStream = (stream: any, connectedUserSocketId: string) =>{
 export const toggleMic = (isMuted: boolean) =>{
     localStream.getAudioTracks()[0].enabled = isMuted ? true : false;
 }
+
+export const toggleCamera = (isDisbled: boolean) =>{
+    localStream.getVideoTracks()[0].enabled = isDisbled ? true : false;
+}
