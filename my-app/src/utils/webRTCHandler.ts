@@ -130,8 +130,13 @@ const showLocalVideoPreview = (stream: any) =>{
     videoElement.muted = true;
     videoElement.srcObject = stream;
 
-   // Apply the transform to flip the video horizontally
-   videoElement.style.transform = "scaleX(-1)"; // This flips the video horizontally
+   // Check if the stream is a screen share or a camera feed
+   const isScreenSharingStream = stream.getVideoTracks()[0]?.getSettings()?.displaySurface !== undefined;
+
+   // Apply the transform to flip the camera video horizontally, but not the screen sharing
+   if (!isScreenSharingStream) {
+     videoElement.style.transform = "scaleX(-1)"; // Flips the video horizontally
+   }
 
     videoElement.onloadedmetadata = () =>{
         videoElement.play()
@@ -153,8 +158,13 @@ const addStream = (stream: any, connectedUserSocketId: string) =>{
     videoElement.srcObject = stream;
     videoElement.id = `${connectedUserSocketId}-video`
 
-    //  Apply the transform to flip the video horizontally
-   videoElement.style.transform = "scaleX(-1)";
+   // Check if the stream is a screen share or a camera feed
+  const isScreenSharingStream = stream.getVideoTracks()[0]?.getSettings()?.displaySurface !== undefined;
+
+  // Apply the transform to flip the camera video horizontally, but not the screen sharing
+  if (!isScreenSharingStream) {
+    videoElement.style.transform = "scaleX(-1)"; // Flips the video horizontally
+  }
 
    videoElement.addEventListener("click", () =>{
     if(videoElement.classList.contains("full_screen")){
@@ -181,4 +191,29 @@ export const toggleMic = (isMuted: boolean) =>{
 
 export const toggleCamera = (isDisbled: boolean) =>{
     localStream.getVideoTracks()[0].enabled = isDisbled ? true : false;
+}
+
+export const toggleScreenShare = (isScreenSharingActive: boolean, screenSharingStream: any = null) =>{
+    if(isScreenSharingActive){
+        switchVideoTracks(localStream)
+    }else{
+        switchVideoTracks(screenSharingStream)
+    }
+}
+
+export const switchVideoTracks = (stream: any) =>{
+    for(let socket_id in peers){
+        for(let index in peers[socket_id].streams[0].getTracks()){
+            for(let index2 in stream.getTracks()){
+                if(peers[socket_id].streams[0].getTracks()[index].kind === stream.getTracks()[index2].kind){
+                    peers[socket_id].replaceTrack(
+                        peers[socket_id].streams[0].getTracks()[index],
+                        stream.getTracks()[index2],
+                        peers[socket_id].streams[0]
+                    ); 
+                    break;
+                }
+            }
+        }
+    }
 }
