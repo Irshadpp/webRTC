@@ -3,12 +3,13 @@ import { connectedUsers, rooms } from '../..';
 
 export const createNewRoom = (data: any, socket: any) =>{
     const roomId = uuidv4();
-    const {identity} = data; 
+    const {identity, onlyAudio} = data; 
     const newUser = {
         identity,
         id: uuidv4(),
         socketId: socket.id,
-        roomId
+        roomId,
+        onlyAudio
     }
     connectedUsers.push(newUser);
 

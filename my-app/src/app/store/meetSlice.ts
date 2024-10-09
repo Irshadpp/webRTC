@@ -9,6 +9,7 @@ export const initialState: any = {
   roomId: null,
   showOverlay: true,
   participants: [],
+  messages: []
 };
 
 const meetSlice = createSlice({
@@ -33,6 +34,9 @@ const meetSlice = createSlice({
     setParticipants (state, action: PayloadAction<any[]>){
       state.participants = action.payload
     },
+    setMessages (state, action: PayloadAction<any[]>){
+      state.messages = action.payload
+    },
     resetState: () => initialState
   },
 });
@@ -44,6 +48,7 @@ export const {
     setIdentity,
     setShowOverlay,
     setParticipants,
+    setMessages,
     resetState
 } = meetSlice.actions;
 
