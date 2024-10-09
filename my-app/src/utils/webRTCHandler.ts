@@ -1,4 +1,4 @@
-import { setShowOverlay } from "../app/store/meetSlice";
+import { setMessages, setShowOverlay } from "../app/store/meetSlice";
 import store from "../app/store/store";
 import * as wss from "./wss"
 import Peer from "simple-peer"
@@ -8,20 +8,27 @@ const defaultConstraints = {
     video: true,
 }
 
+const onlyAudioConstraints = {
+    audio: true,
+    video: false
+}
+
 let localStream: any;
 let streams: any[] = [];
 
 export const getLocalPreviewAndInitRoomConnection = (
     isRoomHost: boolean,
     identity: string,
-    roomId: null | string = null
+    roomId: null | string = null,
+    onlyAudio: boolean
 ) =>{
-    navigator.mediaDevices.getUserMedia(defaultConstraints).then(stream =>{
+    const constraints = onlyAudio ? onlyAudioConstraints : defaultConstraints;
+    navigator.mediaDevices.getUserMedia(constraints).then(stream =>{
         console.log("Recieved local stream successfully");
         localStream = stream;
         showLocalVideoPreview(localStream);
         store.dispatch(setShowOverlay(false));
-        isRoomHost ? wss.createNewRoom(identity) : wss.joinRoom(identity, roomId as string);
+        isRoomHost ? wss.createNewRoom(identity, onlyAudio) : wss.joinRoom(identity, roomId as string, onlyAudio);
     }).catch((error: any) =>{
         console.log("error occured when when trying to get an access to local stream");
         console.log(error)
@@ -41,6 +48,8 @@ const getConfiguration = () =>{
         ]
     }
 }
+
+const messngerChannel = "messenger"
 
 export const prepareNewPeerConnection = (connUserSocketId: any, isInitiator: boolean) => {
     try {
@@ -64,12 +73,12 @@ export const prepareNewPeerConnection = (connUserSocketId: any, isInitiator: boo
         peers[connUserSocketId] = new Peer({
             initiator: isInitiator,
             config: configuration,
-            stream: localStream
+            stream: localStream,
+            channelName: messngerChannel
         });
 
         
         peers[connUserSocketId].on("signal", (data: any) => {
-            console.log("connUser socketId==================>",connUserSocketId,"signal data===================================>",data)
             const signalData = {
                 signal: data,
                 connUserSocketId: connUserSocketId
@@ -79,10 +88,15 @@ export const prepareNewPeerConnection = (connUserSocketId: any, isInitiator: boo
 
         peers[connUserSocketId].on("stream", (stream: any) => {
             console.log("new stream received");
-
+            
             addStream(stream, connUserSocketId);
             streams.push(stream);
         });
+
+        peers[connUserSocketId].on("data", (data: any)=>{
+            const messageData = JSON.parse(data)
+            appendNewMessage(messageData)
+        })
     } catch (error) {
         console.error("Error creating Peer object:", error);
     }
@@ -143,6 +157,11 @@ const showLocalVideoPreview = (stream: any) =>{
     };
 
     videoContainer.appendChild(videoElement);
+
+    const {connectOnlyWithAudio} = store.getState().meet
+    if(connectOnlyWithAudio){
+        videoContainer.appendChild(getAudioOnlyLabel("You"))
+    }
     videosContainer?.appendChild(videoContainer);
 }
 
@@ -179,7 +198,27 @@ const addStream = (stream: any, connectedUserSocketId: string) =>{
    };
 
    videoContainer.appendChild(videoElement);
+
+   //check if the user connected only with audio
+   const {participants} = store.getState().meet;
+   const participant = participants.find((p: any) => p.socketId === connectedUserSocketId);
+
+   if(participant?.onlyAudio){
+    videoContainer.appendChild(getAudioOnlyLabel(participant.identity));
+   }
    videosContainer?.appendChild(videoContainer);
+}
+
+const getAudioOnlyLabel = (identity = "") =>{
+    const labelContainer = document.createElement("div");
+    labelContainer.classList.add("label_only_audio_container");
+
+    const label = document.createElement("p");
+    label.classList.add("label_only_text_audio");
+    label.innerHTML = `Only Audio ${identity}`;
+
+    labelContainer.appendChild(label);
+    return labelContainer;
 }
 
 
@@ -215,5 +254,35 @@ export const switchVideoTracks = (stream: any) =>{
                 }
             }
         }
+    }
+}
+
+
+////////////////////////// Messages //////////////////////////////////
+const appendNewMessage = (messageData: any) =>{
+    const {messages = []} = store.getState().meet
+    console.log("----------------", messages)
+    store.dispatch(setMessages([...messages, messageData]))
+}
+
+export const sendMessageUsingDataSignal = (messageConent: string) =>{
+    //append this message locally
+    const {identity} = store.getState().meet;
+
+    const localMessageData = {
+        content: messageConent,
+        identity,
+        messageCreatedByMe: true
+    }
+    appendNewMessage(localMessageData);
+
+    const messageData = {
+        content: messageConent,
+        identity
+    }
+    const stringifiedMessageData = JSON.stringify(messageData)
+
+    for(let socketId in peers){
+        peers[socketId].send(stringifiedMessageData);
     }
 }

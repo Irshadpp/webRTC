@@ -2,12 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { connectedUsers, rooms } from '../..';
 
 export const joinRoom = (data: any, socket: any, io: any) =>{
-    const {identity, roomId} = data;
+    const {identity, roomId, onlyAudio} = data;
     const newUser = {
         identity,
         id: uuidv4(),
         socketId: socket.id,
-        roomId
+        roomId,
+        onlyAudio
     }
 
     const room = rooms.find(r => r.id === roomId);

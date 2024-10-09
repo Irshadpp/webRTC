@@ -1,27 +1,29 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
 
-const messages: any = [
-    {
-        content: "hey",
-        identity: "Shahal",
-        messageCreatedByMe: true
-    },
-    {
-        content: "hey guyzz",
-        identity: "Shahal",
-        messageCreatedByMe: true
-    },
-    {
-        content: "hellooooooo",
-        identity: "razik",
-        messageCreatedByMe: false
-    },
-    {
-        content: "ok fine how is it going",
-        identity: "shamil",
-        messageCreatedByMe: false
-    },
-]
+// const messages: any = [
+//     {
+//         content: "hey",
+//         identity: "Shahal",
+//         messageCreatedByMe: true
+//     },
+//     {
+//         content: "hey guyzz",
+//         identity: "Shahal",
+//         messageCreatedByMe: true
+//     },
+//     {
+//         content: "hellooooooo",
+//         identity: "razik",
+//         messageCreatedByMe: false
+//     },
+//     {
+//         content: "ok fine how is it going",
+//         identity: "shamil",
+//         messageCreatedByMe: false
+//     },
+// ]
 
 const Message = ({author, content, sameAuthor, messageCreatedByMe}) =>{
     const alignClass = messageCreatedByMe ? "message_align_right" : "message_align_left"
@@ -39,6 +41,7 @@ const Message = ({author, content, sameAuthor, messageCreatedByMe}) =>{
 }
 
 const Messages = () => {
+    const {messages} = useSelector((state: RootState) => state.meet)
   return (
     <div className='messages_container'>
       {messages && messages.map((message: any, index: number)=>{
